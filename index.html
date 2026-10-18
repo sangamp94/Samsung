@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#08090d">
+<title>Streamify — TV</title>
+<style>
+:root{--bg:#08090d;--panel:#11131b;--muted:#9ba0b0;--red:#f12d48;--focus:#fff;--gap:20px}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:#f7f7fb;font-family:Arial,Helvetica,sans-serif}body{overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer}button:focus-visible,[tabindex]:focus-visible{outline:3px solid white;outline-offset:4px}
+.shell{min-height:100vh;background:radial-gradient(ellipse at 80% 10%,#33101d 0,transparent 35%),linear-gradient(110deg,#08090d 45%,#130b12)}
+.topbar{height:82px;display:flex;align-items:center;gap:40px;padding:0 5vw;position:relative;z-index:5}
+.brand{font-size:30px;font-weight:900;letter-spacing:-1.5px}.brand span{color:var(--red)}
+.nav{display:flex;gap:10px}.nav button,.top-action{background:transparent;border:0;padding:12px 18px;border-radius:12px;color:#b8bbc6;font-size:16px}.nav button.active,.nav button:focus,.top-action:focus{background:#ffffff16;color:white}
+.topright{margin-left:auto;display:flex;align-items:center;gap:14px}.status{font-size:12px;color:#c8cad3;border:1px solid #343641;padding:8px 12px;border-radius:99px}
+main{padding:12px 5vw 60px}.hero{min-height:390px;display:flex;align-items:center;position:relative;overflow:hidden;border-radius:24px;background:linear-gradient(90deg,#16111b 0%,#23111d 42%,#090b11 100%);padding:42px 5%;border:1px solid #ffffff12}
+.hero:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 78% 45%,#e42a4c33,transparent 28%),linear-gradient(90deg,transparent 40%,#09090c44);pointer-events:none}
+.hero-copy{position:relative;z-index:1;max-width:540px}.eyebrow{font-size:12px;font-weight:800;letter-spacing:3px;color:#ff6478;text-transform:uppercase}.hero h1{font-size:clamp(38px,5vw,68px);line-height:.98;margin:16px 0;letter-spacing:-2px}.hero p{color:#c0c0ca;font-size:17px;line-height:1.6;max-width:460px}.actions{display:flex;gap:14px;margin-top:25px;flex-wrap:wrap}.primary,.secondary{border:0;border-radius:12px;padding:14px 22px;font-weight:800}.primary{background:var(--red);box-shadow:0 8px 28px #f12d4830}.secondary{background:#ffffff15;border:1px solid #ffffff24}.hero-art{position:absolute;right:7%;top:50%;transform:translateY(-50%);width:min(34vw,360px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff758b,#c11d3e 35%,#501128 65%,#17101b 72%);box-shadow:0 0 90px #ee234333,inset -25px -30px 60px #09090d;opacity:.8}
+.hero-art:after{content:"S";position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(110px,18vw,210px);font-weight:900;color:#ffffff24;text-shadow:0 4px 30px #3a0619}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin:32px 0 15px}.section-head h2{font-size:21px;margin:0}.section-head span{font-size:13px;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}.tile{min-width:0;text-align:left;border:1px solid #ffffff0d;background:#11131a;border-radius:15px;padding:0;overflow:hidden;transition:transform .16s,border-color .16s,background .16s}.tile:focus,.tile.selected{transform:scale(1.035);border-color:#fff;background:#1b1d27;outline:3px solid #fff;outline-offset:2px}.poster{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--c1),var(--c2))}.poster:before{content:"";position:absolute;width:65%;height:150%;border-radius:50%;background:#ffffff16;transform:rotate(35deg);left:-18%;top:-30%}.poster strong{font-size:clamp(18px,2vw,29px);letter-spacing:-1px;position:relative;text-shadow:0 3px 18px #0008}.live-dot{position:absolute;top:10px;left:10px;background:#e82943;color:white;font-size:10px;letter-spacing:1px;padding:5px 7px;border-radius:4px;font-weight:bold}.tile-info{padding:12px 13px 14px}.tile-info b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tile-info small{display:block;color:var(--muted);margin-top:6px;font-size:12px}
+.notice{margin-top:34px;padding:16px 18px;border-radius:13px;background:#ffffff08;border:1px solid #ffffff10;color:#aeb2c0;font-size:13px;line-height:1.6}
+.overlay{display:none;position:fixed;inset:0;background:#000;z-index:20;align-items:center;justify-content:center}.overlay.open{display:flex}.player{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#27101a,#030406 70%);text-align:center;padding:24px}.player h2{font-size:clamp(26px,4vw,48px);margin:12px}.player p{color:#b7b7c4}.player-controls{display:flex;gap:12px;margin-top:18px}.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#20212b;border:1px solid #ffffff30;border-radius:12px;padding:12px 18px;z-index:30;display:none}.toast.show{display:block}
+footer{padding:22px 5vw 35px;color:#6f7381;font-size:12px}
+@media(max-width:900px){.cards{grid-template-columns:repeat(3,minmax(0,1fr))}.hero-art{right:-8%;opacity:.4;width:45vw}.topbar{gap:18px}.nav button{padding:10px}}
+@media(max-width:600px){.topbar{height:auto;min-height:72px;padding:16px 5vw;flex-wrap:wrap}.brand{font-size:26px}.nav{order:3;width:100%;overflow:auto}.nav button{white-space:nowrap}.topright{margin-left:auto}.status{display:none}main{padding-top:8px}.hero{min-height:380px;padding:28px 24px}.hero-art{width:62vw;right:-20%;top:20%;transform:none;opacity:.25}.hero-copy{max-width:100%}.hero p{font-size:15px}.cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.section-head{margin-top:26px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="topbar">
+<div class="brand" aria-label="Streamify">STREAM<span>IFY</span></div>
+<nav class="nav" aria-label="Main navigation">
+<button class="active" data-section="home">Home</button><button data-section="live">Live TV</button><button data-section="movies">Movies</button><button data-section="series">Series</button><button data-section="mylist">My List</button>
+</nav>
+<div class="topright"><span class="status">TV MODE READY</span><button class="top-action" id="searchBtn" aria-label="Search">⌕ Search</button></div>
+</header>
+<main>
+<section class="hero" aria-labelledby="heroTitle">
+<div class="hero-copy"><div class="eyebrow">YOUR ENTERTAINMENT HUB</div><h1 id="heroTitle">Every screen.<br>One Stream.</h1><p>A cleaner way to discover live channels and entertainment. Built for big screens, simple remote navigation, and quick access.</p><div class="actions"><button class="primary" id="watchLive">▶ &nbsp; Explore Live TV</button><button class="secondary" id="browseBtn">Browse collection</button></div></div><div class="hero-art" aria-hidden="true"></div>
+</section>
+<section id="liveSection"><div class="section-head"><h2 id="rowTitle">Featured channels</h2><span id="rowHint">Select a card to open</span></div><div class="cards" id="cards"></div></section>
+<section><div class="section-head"><h2>Made for your TV</h2><span>Remote-friendly interface</span></div><div class="cards">
+<button class="tile" data-play="Continue watching"><div class="poster" style="--c1:#172e49;--c2:#247d92"><strong>CONTINUE</strong></div><div class="tile-info"><b>Continue watching</b><small>Pick up where you left off</small></div></button>
+<button class="tile" data-play="Discover"><div class="poster" style="--c1:#552039;--c2:#d44850"><strong>DISCOVER</strong></div><div class="tile-info"><b>Discover something new</b><small>Explore the collection</small></div></button>
+<button class="tile" data-play="Favorites"><div class="poster" style="--c1:#29234f;--c2:#7653b8"><strong>MY LIST</strong></div><div class="tile-info"><b>Your favorites</b><small>Keep picks close</small></div></button>
+<button class="tile" data-play="Settings"><div class="poster" style="--c1:#204039;--c2:#6a9c64"><strong>SETTINGS</strong></div><div class="tile-info"><b>App settings</b><small>Keyboard and TV tips</small></div></button>
+<button class="tile" data-play="Help"><div class="poster" style="--c1:#443022;--c2:#b78345"><strong>HELP</strong></div><div class="tile-info"><b>Help & controls</b><small>Navigate with your remote</small></div></button>
+</div></section>
+<div class="notice"><b>Demo interface:</b> This website is a front-end starter. Live channel playback, account login, and playlist support are not connected yet. Add only streams and media you have permission to use.</div>
+</main>
+<footer>STREAMIFY · TV WEB EXPERIENCE · Use Arrow keys to navigate, Enter to select, and Escape or Backspace to close overlays.</footer>
+</div>
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="playerTitle"><div class="player"><div class="brand">STREAM<span>IFY</span></div><h2 id="playerTitle">Welcome to Streamify</h2><p id="playerText">This is a preview screen. Connect an authorized stream to enable playback.</p><div class="player-controls"><button class="primary" id="closePlayer">← Back to home</button><button class="secondary" id="fullscreenBtn">⛶ Fullscreen</button></div></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+const channels=[
+{name:"Streamify Live",type:"LIVE CHANNEL",desc:"Live entertainment",c1:"#351022",c2:"#d9234a",label:"LIVE"},
+{name:"Cinema",type:"MOVIE COLLECTION",desc:"Movies and highlights",c1:"#13294b",c2:"#3d70ba",label:"FEATURED"},
+{name:"Kids Zone",type:"FAMILY",desc:"Family-friendly picks",c1:"#5b2d20",c2:"#d58a43",label:"FAMILY"},
+{name:"Music Lounge",type:"MUSIC",desc:"Music and performances",c1:"#2c1a50",c2:"#a249b5",label:"MUSIC"},
+{name:"Documentary",type:"DISCOVERY",desc:"Stories and discovery",c1:"#17403a",c2:"#4a9c85",label:"EXPLORE"}
+];
+const cards=document.getElementById('cards'),overlay=document.getElementById('overlay'),toast=document.getElementById('toast');
+function notify(s){toast.textContent=s;toast.classList.add('show');clearTimeout(notify.t);notify.t=setTimeout(()=>toast.classList.remove('show'),2600)}
+function openPreview(name,desc){document.getElementById('playerTitle').textContent=name;document.getElementById('playerText').textContent=desc||'This is a preview screen. Connect an authorized stream to enable playback.';overlay.classList.add('open');document.getElementById('closePlayer').focus()}
+function render(items){cards.innerHTML='';items.forEach(item=>{const b=document.createElement('button');b.className='tile';b.dataset.play=item.name;b.innerHTML='<div class="poster" style="--c1:'+item.c1+';--c2:'+item.c2+'"><span class="live-dot">'+item.label+'</span><strong>'+item.name.toUpperCase()+'</strong></div><div class="tile-info"><b>'+item.name+'</b><small>'+item.desc+'</small></div>';b.addEventListener('click',()=>openPreview(item.name,'Playback is not connected yet. Add a valid, authorized stream URL to enable this channel.'));cards.appendChild(b)})}
+render(channels);
+document.querySelectorAll('[data-section]').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('[data-section]').forEach(x=>x.classList.remove('active'));btn.classList.add('active');const s=btn.dataset.section;document.getElementById('rowTitle').textContent=({home:'Featured channels',live:'Live TV',movies:'Movies collection',series:'Series collection',mylist:'My List'})[s];render(s==='live'?[channels[0],channels[3],channels[2]]:s==='movies'?[channels[1],channels[4],channels[1]]:s==='series'?[channels[4],channels[2],channels[3]]:s==='mylist'?[channels[0],channels[1]]:channels);document.getElementById('liveSection').scrollIntoView({behavior:'smooth',block:'start'})}));
+document.getElementById('watchLive').onclick=()=>{document.querySelector('[data-section="live"]').click()};
+document.getElementById('browseBtn').onclick=()=>document.getElementById('liveSection').scrollIntoView({behavior:'smooth'});
+document.getElementById('searchBtn').onclick=()=>{const q=prompt('Search channels and collections');if(q===null)return;const found=channels.filter(x=>(x.name+' '+x.type+' '+x.desc).toLowerCase().includes(q.toLowerCase()));render(found);document.getElementById('rowTitle').textContent=q.trim()?'Search results: '+q:'Featured channels';notify(found.length?found.length+' result(s) found':'No matches found')};
+document.querySelectorAll('[data-play]').forEach(b=>b.addEventListener('click',()=>openPreview(b.dataset.play,'This section is a demo placeholder. Connect your content source to enable this feature.')));
+document.getElementById('closePlayer').onclick=()=>{overlay.classList.remove('open');document.getElementById('watchLive').focus()};
+document.getElementById('fullscreenBtn').onclick=async()=>{try{if(!document.fullscreenElement)await overlay.requestFullscreen();else await document.exitFullscreen()}catch(e){notify('Fullscreen is not available in this browser.')}};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'||e.key==='Backspace'){if(overlay.classList.contains('open')){overlay.classList.remove('open');e.preventDefault()}return}if(overlay.classList.contains('open'))return;const focusables=[...document.querySelectorAll('button:not([disabled])')];const i=focusables.indexOf(document.activeElement);if(['ArrowRight','ArrowLeft','ArrowDown','ArrowUp'].includes(e.key)){if(i<0){focusables[0]?.focus();return}e.preventDefault();let next=i;if(e.key==='ArrowRight')next=Math.min(i+1,focusables.length-1);if(e.key==='ArrowLeft')next=Math.max(i-1,0);if(e.key==='ArrowDown')next=Math.min(i+5,focusables.length-1);if(e.key==='ArrowUp')next=Math.max(i-5,0);focusables[next]?.focus()}});
+})();
+</script>
+</body></html>
